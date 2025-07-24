@@ -1,4 +1,3 @@
-// 在这里添加你的 JavaScript 代码
 // 配置Tailwind自定义颜色和字体
 tailwind.config = {
   theme: {
@@ -16,7 +15,7 @@ tailwind.config = {
       },
     },
   }
-}
+};
 
 // 从后端获取地图API密钥
 async function fetchMapKey() {
@@ -47,7 +46,7 @@ async function initMap() {
     const key = await fetchMapKey();
     const script = document.getElementById('amap-script');
     script.src = `https://webapi.amap.com/maps?v=2.0&key=${key}`;
-    
+
     script.onload = function() {
       // 直接使用加载完成的AMap对象初始化地图
       const map = new AMap.Map('map-container', {
@@ -88,13 +87,13 @@ function fetchRouteDetails(fromCity, toCity, transportMode) {
           case 'plane':
             // AMap.Transfer不支持飞机类型，使用自定义处理
             clearTimeout(timeoutId);
-            resolve({transportMode: 'plane', message: '飞机路线暂不支持详细查询'});
+            resolve({ transportMode: 'plane', message: '飞机路线暂不支持详细查询' });
             return;
           case 'train':
-            routeService = new AMap.Transfer({type: 'train'});
+            routeService = new AMap.Transfer({ type: 'train' });
             break;
           case 'high-speed':
-            routeService = new AMap.Transfer({type: 'train', policy: 'LEAST_TIME'});
+            routeService = new AMap.Transfer({ type: 'train', policy: 'LEAST_TIME' });
             break;
           default:
             routeService = new AMap.Walking();
@@ -182,7 +181,7 @@ function generateItinerary(formData) {
         attractions
       };
       return itinerary;
-  
+
     })
     .catch(error => {
       console.error('行程生成错误:', error);
@@ -201,17 +200,32 @@ function generateItinerary(formData) {
 function displayItinerary(itinerary) {
   try {
     // 隐藏空状态，显示结果区域
-    document.getElementById('empty-results').classList.add('hidden');
-    document.getElementById('generated-results').classList.remove('hidden');
-    
+    const emptyResults = document.getElementById('empty-results');
+    if (emptyResults) {
+      emptyResults.classList.add('hidden');
+    }
+    const generatedResults = document.getElementById('generated-results');
+    if (generatedResults) {
+      generatedResults.classList.remove('hidden');
+    }
+
     // 更新行程标题和日期
-    document.getElementById('trip-title').textContent = `${itinerary.fromCity} 到 ${itinerary.toCity} 行程规划`;
-    document.getElementById('trip-dates').textContent = `${itinerary.departureDate} - ${itinerary.returnDate}`;
-    
+    const tripTitle = document.getElementById('trip-title');
+    if (tripTitle) {
+      tripTitle.textContent = `${itinerary.fromCity} 到 ${itinerary.toCity} 行程规划`;
+    }
+    const tripDates = document.getElementById('trip-dates');
+    if (tripDates) {
+      tripDates.textContent = `${itinerary.departureDate} - ${itinerary.returnDate}`;
+    }
+
     // 更新行程概览
-    const tripDays = Math.ceil((new Date(itinerary.returnDate) - new Date(itinerary.departureDate)) / (1000 * 60 * 60 * 24)) + 1;
-    document.getElementById('trip-days').textContent = `${tripDays}天${tripDays-1}晚`;
-    
+    const tripDaysElement = document.getElementById('trip-days');
+    if (tripDaysElement) {
+      const tripDays = Math.ceil((new Date(itinerary.returnDate) - new Date(itinerary.departureDate)) / (1000 * 60 * 60 * 24)) + 1;
+      tripDaysElement.textContent = `${tripDays}天${tripDays - 1}晚`;
+    }
+
     // 添加路线详情
     const routeDetailsDiv = document.createElement('div');
     routeDetailsDiv.className = 'mt-6 bg-white rounded-lg p-4 shadow-sm';
@@ -219,31 +233,37 @@ function displayItinerary(itinerary) {
       <h4 class="font-serif font-bold text-lg text-gray-800 mb-3">路线详情</h4>
       <pre class="text-sm bg-gray-50 p-3 rounded">${JSON.stringify(itinerary.routeDetails, null, 2)}</pre>
     `;
-    document.getElementById('generated-results').appendChild(routeDetailsDiv);
+    if (generatedResults) {
+      generatedResults.appendChild(routeDetailsDiv);
+    }
 
     // 更新景点列表
-  } catch (error) {
-    console.error('显示行程失败:', error);
-    throw new Error(`显示行程: ${error.message}`);
-  }
     let attractionsList = document.querySelector('#generated-results ul');
     if (!attractionsList) {
       // 如果景点列表容器不存在，则创建它
       const attractionsDiv = document.createElement('div');
       attractionsDiv.className = 'mt-6';
       attractionsDiv.innerHTML = '<h4 class="font-serif font-bold text-lg text-gray-800 mb-3">景点推荐</h4><ul></ul>';
-      document.getElementById('generated-results').appendChild(attractionsDiv);
+      if (generatedResults) {
+        generatedResults.appendChild(attractionsDiv);
+      }
       attractionsList = attractionsDiv.querySelector('ul');
     }
-    attractionsList.innerHTML = itinerary.attractions.map(attraction => 
-      `<li class="flex items-start mb-4">
-        <i class="fa fa-map-marker text-primary mt-1 mr-3"></i>
-        <div>
-          <h5 class="font-medium">${attraction.name}</h5>
-          <p class="text-sm text-gray-600">${attraction.address || '地址未知'}</p>
-        </div>
-      </li>`
-    ).join('');
+    if (attractionsList) {
+      attractionsList.innerHTML = itinerary.attractions.map(attraction =>
+        `<li class="flex items-start mb-4">
+          <i class="fa fa-map-marker text-primary mt-1 mr-3"></i>
+          <div>
+            <h5 class="font-medium">${attraction.name}</h5>
+            <p class="text-sm text-gray-600">${attraction.address || '地址未知'}</p>
+          </div>
+        </li>`
+      ).join('');
+    }
+  } catch (error) {
+    console.error('显示行程失败:', error);
+    throw new Error(`显示行程: ${error.message}`);
+  }
 }
 
 // 表单提交处理
