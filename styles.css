@@ -1,0 +1,65 @@
+/* 自定义工具类 */
+@layer utilities {
+  .content-auto {
+    content-visibility: auto;
+  }
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  .transition-custom {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+/* 表单样式 */
+#trip-form {
+  margin-bottom: 20px;
+}
+
+#trip-form label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+#trip-form input[type='text'],
+#trip-form input[type='date'],
+  #trip-form input[type='number'],
+  #trip-form select {
+    width: 100%;
+    padding: 8px 8px 8px 2.5rem;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+
+#trip-form input[type='radio'] {
+  margin-right: 5px;
+}
+
+/* 行程规划样式 */
+#itinerary {
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+#itinerary h3 {
+  margin-top: 0;
+}
+
+#itinerary pre {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  white-space: pre-wrap;
+}
+
+#itinerary ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+#itinerary li {
+  margin-bottom: 5px;
+}
